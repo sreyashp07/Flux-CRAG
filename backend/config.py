@@ -35,6 +35,8 @@ class Settings(BaseSettings):
 
     # --- Retrieval ---
     retrieval_k: int = 4
+    chunk_size: int = 800
+    chunk_overlap: int = 120
 
     # --- Corrective RAG behaviour ---
     min_relevant_docs: int = 1
