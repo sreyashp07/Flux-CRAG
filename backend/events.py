@@ -17,6 +17,7 @@ class NodeName(str, Enum):
 class Status(str, Enum):
     STARTED = "started"
     COMPLETED = "completed"
+    PROGRESS = "progress"  # per-item update inside a node, e.g. grading chunk 2 of 4
     DECISION = "decision"  # a routing outcome, e.g. "relevance failed"
     FAILED = "failed"
 
