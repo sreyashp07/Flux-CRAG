@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@theme static {
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "Cascadia Code", Consolas, monospace;
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+
+  --color-moss-950: #0b0e07;
+  --color-moss-900: #11150a;
+  --color-moss-850: #161b0e;
+  --color-moss-800: #1c2311;
+  --color-moss-700: #29331a;
+  --color-moss-600: #3a4825;
+  --color-moss-500: #55673a;
+
+  --color-fern-300: #a6bb5a;
+  --color-fern-400: #849a45;
+  --color-spark-200: #cfe07a;
+
+  --color-bone-100: #ecead2;
+  --color-bone-300: #bcbb9f;
+  --color-bone-500: #80806b;
+
+  --color-ochre-400: #d4a644;
+  --color-rust-400: #c8583b;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-moss-950);
+  color: var(--color-bone-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-fern-400);
+  color: var(--color-moss-950);
+}
+
+/* Moss field: soft light pools plus a faint engineering grid */
+.field-bg {
+  background-image:
+    radial-gradient(1200px 620px at 10% -12%, rgb(132 154 69 / 0.22), transparent 62%),
+    radial-gradient(900px 520px at 100% 0%, rgb(207 224 122 / 0.07), transparent 58%),
+    linear-gradient(rgb(236 234 210 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(236 234 210 / 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+}
+
+/* Film grain over the whole page */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Signature detail: L-shaped corner ticks on panels */
+.corner-ticks {
+  position: relative;
+}
+.corner-ticks::before,
+.corner-ticks::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  border-color: var(--color-fern-400);
+}
+.corner-ticks::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-top-left-radius: 8px;
+}
+.corner-ticks::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-bottom-right-radius: 8px;
+}
+
+.glow-fern {
+  box-shadow:
+    0 0 0 1px rgb(207 224 122 / 0.35),
+    0 10px 30px -10px rgb(132 154 69 / 0.85);
+}
+
+.bar-fill {
+  background: linear-gradient(90deg, var(--color-fern-400), var(--color-spark-200));
+}
+
+/* Streaming answer caret */
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5ch;
+  height: 1.05em;
+  margin-left: 3px;
+  vertical-align: -0.14em;
+  background: var(--color-spark-200);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* Loading skeleton */
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-moss-800) 25%,
+    var(--color-moss-700) 50%,
+    var(--color-moss-800) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Indeterminate scan line shown while the agent runs */
+@keyframes scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+.scanbar {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: var(--color-moss-700);
+}
+.scanbar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, var(--color-spark-200), transparent);
+  animation: scan 1.4s ease-in-out infinite;
+}
