@@ -11,7 +11,8 @@ SNIPPET_PREVIEW_CHARS = 160
 
 def _search_web(query: str, max_results: int) -> list[dict]:
     """Run a DuckDuckGo text search. Returns dicts with title, href and body keys."""
-    return list(DDGS().text(query, max_results=max_results))
+    backend = get_settings().web_search_backend
+    return list(DDGS().text(query, max_results=max_results, backend=backend))
 
 
 def _to_documents(results: list[dict]) -> list[Document]:
@@ -59,7 +60,7 @@ def web_search(state: GraphState) -> dict:
             build_event(
                 NodeName.WEB_SEARCH,
                 Status.FAILED,
-                f"Web search failed ({exc.__class__.__name__})",
+                f"Web search failed ({exc.__class__.__name__}: {str(exc)[:120]})",
                 {"error": str(exc)},
             )
         )

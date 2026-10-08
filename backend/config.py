@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     min_relevant_docs: int = 1
     max_rewrite_attempts: int = 2
     web_search_max_results: int = 3
+    web_search_backend: str = "auto"
 
 
 @lru_cache
