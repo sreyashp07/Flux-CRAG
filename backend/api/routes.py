@@ -30,3 +30,23 @@ def health() -> dict:
         "embedding_model": settings.embedding_model,
         "chunks_indexed": chunks,
     }
+
+
+@router.get("/graph")
+def graph() -> dict:
+    """Nodes and edges of the agent graph, so the UI never hard-codes them."""
+    return get_topology()
+
+
+@router.get("/knowledge-base")
+def knowledge_base() -> dict:
+    """Which source files are indexed and how many chunks each contributed."""
+    data = get_vectorstore().get(include=["metadatas"])
+    counts: dict[str, int] = {}
+    for metadata in data.get("metadatas") or []:
+        source = (metadata or {}).get("source", "unknown")
+        counts[source] = counts.get(source, 0) + 1
+    return {
+        "total_chunks": sum(counts.values()),
+        "sources": [{"source": name, "chunks": n} for name, n in sorted(counts.items())],
+    }
