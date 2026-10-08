@@ -37,3 +37,37 @@ def get_topology() -> dict:
             {"source": WEB_SEARCH, "target": GENERATE, "conditional": False},
         ],
     }
+
+
+def build_graph():
+    """Wire nodes and edges into a compiled, runnable LangGraph.
+
+    START -> retrieve -> grade --relevant--> generate -> END
+                           \\--irrelevant--> rewrite -> web_search -> generate
+    """
+    workflow = StateGraph(GraphState)
+
+    workflow.add_node(RETRIEVE, retrieve)
+    workflow.add_node(GRADE, grade_documents)
+    workflow.add_node(REWRITE, rewrite_query)
+    workflow.add_node(WEB_SEARCH, web_search)
+    workflow.add_node(GENERATE, generate)
+
+    workflow.add_edge(START, RETRIEVE)
+    workflow.add_edge(RETRIEVE, GRADE)
+    workflow.add_conditional_edges(
+        GRADE,
+        route_after_grading,
+        {GENERATE: GENERATE, REWRITE: REWRITE},
+    )
+    workflow.add_edge(REWRITE, WEB_SEARCH)
+    workflow.add_edge(WEB_SEARCH, GENERATE)
+    workflow.add_edge(GENERATE, END)
+
+    return workflow.compile()
+
+
+@lru_cache
+def get_graph():
+    """Compile once and reuse across requests."""
+    return build_graph()
