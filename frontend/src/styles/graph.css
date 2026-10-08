@@ -1,0 +1,112 @@
+/* Agent graph. State classes are driven by data-state on .gwrap. */
+.gwrap {
+  transition: opacity 0.5s ease;
+}
+.gwrap .body {
+  fill: var(--color-moss-850);
+  stroke: var(--color-moss-600);
+  stroke-width: 1.2;
+  transition: fill 0.45s ease, stroke 0.45s ease;
+}
+.gwrap .ring {
+  fill: none;
+  stroke: var(--color-spark-200);
+  stroke-width: 1.5;
+  opacity: 0;
+}
+.gwrap .index {
+  fill: var(--color-bone-500);
+  font: 500 9px var(--font-mono);
+  letter-spacing: 0.2em;
+}
+.gwrap .label {
+  fill: var(--color-bone-100);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+}
+.gwrap .caption {
+  fill: var(--color-bone-500);
+  font: 500 8.5px var(--font-mono);
+  letter-spacing: 0.22em;
+  transition: fill 0.4s ease;
+}
+.gwrap .dot {
+  fill: var(--color-moss-600);
+  transition: fill 0.4s ease;
+}
+
+.gwrap[data-state="active"] .body {
+  fill: #263119;
+  stroke: var(--color-spark-200);
+  filter: url(#glow);
+}
+.gwrap[data-state="active"] .caption,
+.gwrap[data-state="active"] .dot {
+  fill: var(--color-spark-200);
+}
+.gwrap[data-state="done"] .body {
+  fill: #1e2814;
+  stroke: var(--color-fern-400);
+}
+.gwrap[data-state="done"] .caption,
+.gwrap[data-state="done"] .dot {
+  fill: var(--color-fern-300);
+}
+.gwrap[data-state="warn"] .body {
+  stroke: var(--color-ochre-400);
+}
+.gwrap[data-state="warn"] .caption,
+.gwrap[data-state="warn"] .dot {
+  fill: var(--color-ochre-400);
+}
+.gwrap[data-state="skipped"] {
+  opacity: 0.32;
+}
+
+.gedgewrap {
+  transition: opacity 0.5s ease;
+}
+.gedgewrap[data-dim="true"] {
+  opacity: 0.3;
+}
+.gedge-base {
+  stroke: var(--color-moss-600);
+  stroke-width: 1.6;
+  transition: stroke 0.5s ease;
+}
+.gedge-base[data-taken="true"] {
+  stroke: var(--color-fern-400);
+}
+.gflow {
+  stroke: var(--color-spark-200);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  opacity: 0;
+  filter: url(#glow);
+}
+.gpacket {
+  fill: var(--color-spark-200);
+  opacity: 0;
+  filter: url(#glow);
+}
+.glabel rect {
+  fill: var(--color-moss-900);
+  stroke: var(--color-moss-600);
+  transition: stroke 0.4s ease;
+}
+.glabel text {
+  fill: var(--color-bone-500);
+  font: 500 9px var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-anchor: middle;
+  dominant-baseline: central;
+  transition: fill 0.4s ease;
+}
+.glabel[data-taken="true"] rect {
+  stroke: var(--color-fern-400);
+}
+.glabel[data-taken="true"] text {
+  fill: var(--color-spark-200);
+}
