@@ -27,3 +27,16 @@ REWRITER_PROMPT = ChatPromptTemplate.from_messages(
         ("human", "Original question: {question}"),
     ]
 )
+
+GENERATOR_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are a precise assistant that answers strictly from the provided context. "
+            "Cite the context blocks you used with bracketed numbers such as [1] or [2]. "
+            "If the context does not contain the answer, say you could not find it instead "
+            "of guessing. Never invent facts. Keep the answer concise and well structured.",
+        ),
+        ("human", "Context:\n{context}\n\nQuestion: {question}"),
+    ]
+)
