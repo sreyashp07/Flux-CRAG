@@ -16,10 +16,15 @@ def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name, version="0.1.0")
     app.include_router(router)
 
-    # Mounted last so /api/* routes win; serves the dashboard at "/".
-    frontend_dir = BASE_DIR / "frontend"
-    if frontend_dir.exists():
-        app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+    # Mounted last so /api/* routes win; serves the built dashboard at "/".
+    dist_dir = BASE_DIR / "frontend" / "dist"
+    if dist_dir.exists():
+        app.mount("/", StaticFiles(directory=dist_dir, html=True), name="frontend")
+    else:
+
+        @app.get("/", include_in_schema=False)
+        def dashboard_not_built() -> dict:
+            return {"detail": "Dashboard not built. Run: cd frontend && npm install && npm run build"}
     return app
 
 
