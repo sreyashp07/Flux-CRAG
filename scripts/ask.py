@@ -18,6 +18,7 @@ def main() -> int:
     question = " ".join(args.question)
 
     streaming_tokens = False
+    tokens_seen = False
     for item in stream_run(question):
         kind = item["type"]
 
@@ -29,6 +30,7 @@ def main() -> int:
             if item["status"] == "progress" and token is not None:
                 print(token, end="", flush=True)
                 streaming_tokens = True
+                tokens_seen = True
                 continue
             if streaming_tokens:
                 print()
@@ -40,6 +42,8 @@ def main() -> int:
             return 1
 
         elif kind == "final":
+            if not tokens_seen:
+                print("\n" + item["answer"])
             print("\n" + "-" * 60)
             print("PATH   :", " -> ".join(item["path"]))
             print("WEB    :", "yes" if item["used_web_search"] else "no")
