@@ -30,3 +30,57 @@ def _to_documents(results: list[dict]) -> list[Document]:
             )
         )
     return documents
+
+
+def web_search(state: GraphState) -> dict:
+    """LangGraph node: fetch web results and merge them with any chunks that already passed grading.
+
+    Network failures never crash the graph: the node reports a FAILED event and
+    returns whatever context already exists.
+    """
+    settings = get_settings()
+    query = state.get("search_query") or state["question"]
+    existing = state.get("documents", [])
+
+    emit(
+        build_event(
+            NodeName.WEB_SEARCH,
+            Status.STARTED,
+            "Web search fallback: querying DuckDuckGo...",
+            {"query": query},
+        )
+    )
+
+    try:
+        web_docs = _to_documents(_search_web(query, settings.web_search_max_results))
+    except Exception as exc:  # offline, rate-limited, etc.
+        web_docs = []
+        emit(
+            build_event(
+                NodeName.WEB_SEARCH,
+                Status.FAILED,
+                f"Web search failed ({exc.__class__.__name__})",
+                {"error": str(exc)},
+            )
+        )
+
+    emit(
+        build_event(
+            NodeName.WEB_SEARCH,
+            Status.COMPLETED,
+            f"Fetched {len(web_docs)} web result(s)",
+            {
+                "count": len(web_docs),
+                "results": [
+                    {
+                        "title": d.metadata["title"],
+                        "url": d.metadata["url"],
+                        "snippet": d.page_content[:SNIPPET_PREVIEW_CHARS].replace("\n", " "),
+                    }
+                    for d in web_docs
+                ],
+            },
+        )
+    )
+
+    return {"documents": existing + web_docs, "used_web_search": True}
