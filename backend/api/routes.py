@@ -50,3 +50,17 @@ def knowledge_base() -> dict:
         "total_chunks": sum(counts.values()),
         "sources": [{"source": name, "chunks": n} for name, n in sorted(counts.items())],
     }
+
+
+@router.get("/ask")
+def ask(question: str = Query(..., max_length=500)):
+    """Run the agent and stream every step as Server-Sent Events."""
+    cleaned = question.strip()
+    if not cleaned:
+        raise HTTPException(status_code=422, detail="Question must not be empty.")
+
+    def event_stream():
+        for item in stream_run(cleaned):
+            yield {"event": item["type"], "data": json.dumps(item)}
+
+    return EventSourceResponse(event_stream())
